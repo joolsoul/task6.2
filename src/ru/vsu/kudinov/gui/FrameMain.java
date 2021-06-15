@@ -1,6 +1,8 @@
 package ru.vsu.kudinov.gui;
 
 import ru.vsu.kudinov.Searcher;
+import ru.vsu.kudinov.SearcherAbbreviation;
+import ru.vsu.kudinov.SearcherProperNoun;
 import ru.vsu.kudinov.SimpleHashMap;
 import ru.vsu.kudinov.util.FileUtils;
 
@@ -61,7 +63,6 @@ public class FrameMain extends JFrame
         private String text;
         private String outputMessage;
         private Map<String, Integer> map;
-
 
 
         public MainPanel()
@@ -145,13 +146,10 @@ public class FrameMain extends JFrame
             {
                 try
                 {
-                    String[] inputText = FileUtils.readFile();
-                    for(String word : inputText)
-                    {
-                        initialTextArea.append(word);
-                    }
-                }
-                catch (FileNotFoundException fileNotFoundException)
+                    String inputText = FileUtils.readFile();
+                    initialTextArea.setText(inputText);
+
+                } catch (FileNotFoundException fileNotFoundException)
                 {
                     fileNotFoundException.printStackTrace();
                 }
@@ -163,8 +161,7 @@ public class FrameMain extends JFrame
                 try
                 {
                     FileUtils.writeFile(extractedElementsTextArea.getText());
-                }
-                catch (IOException ioException)
+                } catch (IOException ioException)
                 {
                     ioException.printStackTrace();
                 }
@@ -172,21 +169,21 @@ public class FrameMain extends JFrame
 
             clearButton.addActionListener(e ->
             {
-              initialTextArea.setText(null);
-              extractedElementsTextArea.setText(null);
+                initialTextArea.setText(null);
+                extractedElementsTextArea.setText(null);
             });
 
             searchProperNounsCheckBox.addActionListener(e ->
-                    {
-                            instance = new SimpleHashMap.SearcherProperNoun();
-                            outputMessage = "Found proper nouns in this text:\n\n";
-                    });
+            {
+                instance = new SearcherProperNoun();
+                outputMessage = "Found proper nouns in this text:\n\n";
+            });
 
             searchAbbreviationsCheckBox.addActionListener(e ->
-                    {
-                            instance = new SimpleHashMap.SearcherAbbreviation();
-                            outputMessage = "Found abbreviations in this text:\n\n";
-                    });
+            {
+                instance = new SearcherAbbreviation();
+                outputMessage = "Found abbreviations in this text:\n\n";
+            });
 
             myHashMapCheckBox.addActionListener(e ->
             {
@@ -205,7 +202,7 @@ public class FrameMain extends JFrame
                 map.clear();
                 text = initialTextArea.getText();
 
-                if(searchProperNounsCheckBox.isSelected() && searchAbbreviationsCheckBox.isSelected())
+                if (searchProperNounsCheckBox.isSelected() && searchAbbreviationsCheckBox.isSelected())
                 {
                     searchAbbreviationsCheckBox.doClick();
                     instance.search(text, map);
@@ -227,8 +224,7 @@ public class FrameMain extends JFrame
                     {
                         extractedElementsTextArea.append(entry.getKey() + "->" + entry.getValue() + "\n");
                     }
-                }
-                else
+                } else
                 {
                     instance.search(text, map);
 

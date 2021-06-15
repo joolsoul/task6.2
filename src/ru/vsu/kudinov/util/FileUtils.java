@@ -17,16 +17,11 @@ public class FileUtils
         outputFile.close();
     }
 
-    public static String[] readFile() throws FileNotFoundException
+
+    public static String readFile() throws FileNotFoundException
     {
-        List<String> lines;
-        try (Scanner scanner = new Scanner(new File("src\\ru\\vsu\\kudinov\\files\\input.txt"), "UTF-8")) {
-            lines = new ArrayList<>();
-            while (scanner.hasNext())
-            {
-                lines.add(scanner.nextLine());
-            }
-        }
-        return lines.toArray(new String[0]);
+        Scanner scanner = new Scanner(new File("src\\ru\\vsu\\kudinov\\files\\input.txt"), "UTF-8");
+        scanner.useDelimiter("\\Z");
+        return scanner.next();
     }
 }

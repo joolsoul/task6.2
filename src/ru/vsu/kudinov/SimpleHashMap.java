@@ -2,6 +2,7 @@ package ru.vsu.kudinov;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import ru.vsu.kudinov.util.dummy.DefaultNotSupportedMap;
 import ru.vsu.kudinov.util.dummy.DefaultNotSupportedSet;
@@ -10,7 +11,6 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
 {
     private class EntryListItem implements Map.Entry<K, V>
     {
-
         public K key;
         public V value;
         public EntryListItem next;
@@ -43,8 +43,8 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
         }
     }
 
-    protected EntryListItem[] table;
-    protected int size = 0;
+    private EntryListItem[] table;
+    private int size = 0;
 
     public SimpleHashMap(int capacity)
     {
@@ -113,7 +113,8 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
     {
         int index = getIndex(key);
         EntryListItem item = getEntry(key, index);
-        if (item != null) {
+        if (item != null)
+        {
             V oldValue = item.value;
             item.value = value;
             return oldValue;
@@ -128,11 +129,15 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
     {
         int index = getIndex(key);
         EntryListItem parent = null;
-        for (EntryListItem curr = table[index]; curr != null; curr = curr.next) {
-            if (key.equals(curr.key)) {
-                if (parent == null) {
+        for (EntryListItem curr = table[index]; curr != null; curr = curr.next)
+        {
+            if (key.equals(curr.key))
+            {
+                if (parent == null)
+                {
                     table[index] = curr.next;
-                } else {
+                } else
+                {
                     parent.next = curr.next;
                 }
                 size--;
@@ -188,7 +193,8 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
                             for (tableIndex = tableIndex + 1; tableIndex < table.length; tableIndex++)
                             {
                                 curr = table[tableIndex];
-                                if (curr != null) {
+                                if (curr != null)
+                                {
                                     break;
                                 }
                             }
@@ -211,119 +217,5 @@ public class SimpleHashMap<K, V> implements DefaultNotSupportedMap<K, V>
                 };
             }
         };
-    }
-
-    public int getCapacity()
-    {
-        return table == null ? 0 : table.length;
-    }
-
-    public static class SearcherProperNoun implements Searcher
-    {
-        @Override
-        public void search(String text, Map<String, Integer> map)
-        {
-            String[] textArray = readTextToStrArray(text);
-            for(int i = 1; i < textArray.length; i++)
-            {
-                char[] charArray = textArray[i].toCharArray();
-
-                if(Character.isUpperCase(charArray[0]) && !textArray[i - 1].contains(".") && !Character.isUpperCase(charArray[1]))
-                {
-                    boolean isKeyInMap = false;
-                    for(Map.Entry<String, Integer> entry : map.entrySet())
-                    {
-                        if(entry.getKey().equals(textArray[i]))
-                        {
-                            int value = entry.getValue();
-                            entry.setValue(value + 1);
-                            isKeyInMap = true;
-                        }
-                    }
-                    if(!isKeyInMap)
-                    {
-                        map.put(textArray[i].replace('.', ' '), 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public String[] readTextToStrArray(String text)
-        {
-            Scanner scanner = new Scanner(text);
-            scanner.useLocale(Locale.ROOT);
-            scanner.useDelimiter("(\\s|[,;():-])+");
-            java.util.List<String> list = new ArrayList<>();
-            while (scanner.hasNext())
-            {
-                list.add(scanner.next());
-            }
-
-            return list.toArray(new String[0]);
-        }
-    }
-
-    public static class SearcherAbbreviation implements Searcher
-    {
-        @Override
-        public void search(String text, Map<String, Integer> map)
-        {
-            String[] textArray = readTextToStrArray(text);
-
-            for (String word : textArray)
-            {
-                char[] charArray = word.toCharArray();
-
-                boolean isAbbreviation = true;
-
-                if (charArray.length < 6 && charArray.length >1)
-                {
-                    for (char n : charArray)
-                    {
-                        if (!Character.isUpperCase(n))
-                        {
-                            isAbbreviation = false;
-                            break;
-                        }
-                    }
-                } else
-                {
-                    isAbbreviation = false;
-                }
-                if (isAbbreviation)
-                {
-                    boolean isKeyInMap = false;
-                    for (Map.Entry<String, Integer> entry : map.entrySet())
-                    {
-                        if (entry.getKey().equals(word))
-                        {
-                            int value = entry.getValue();
-                            entry.setValue(value + 1);
-                            isKeyInMap = true;
-                        }
-                    }
-                    if (!isKeyInMap)
-                    {
-                        map.put(word, 1);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public String[] readTextToStrArray(String text)
-        {
-            Scanner scanner = new Scanner(text);
-            scanner.useLocale(Locale.ROOT);
-            scanner.useDelimiter("(\\s|[,;():.-])+");
-            java.util.List<String> list = new ArrayList<>();
-            while (scanner.hasNext())
-            {
-                list.add(scanner.next());
-            }
-
-            return list.toArray(new String[0]);
-        }
     }
 }
